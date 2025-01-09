@@ -70,11 +70,15 @@ fn eval_list(list: &Vec<Object>, stack: &mut Stack) -> Object {
             "equal" => { fn_equal(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap(), stack)) }
             "+" => { fn_add(&list_iter.map(|o| eval(o, stack)).collect()) }
             "-" => { fn_subtract(&list_iter.map(|o| eval(o, stack)).collect()) }
+            "*" => { fn_multiply(&list_iter.map(|o| eval(o, stack)).collect()) }
+            "/" => { fn_divide(&list_iter.map(|o| eval(o, stack)).collect()) }
             "mod" => { fn_mod(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap(), stack)) }
             "floor" => { fn_floor(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap_or(&Object::Atom(Atom::Integer(1))), stack)) }
             "apply" => { fn_apply(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap(), stack), stack) }
             "load" => { fn_load(&eval(list_iter.next().unwrap(), stack), stack) }
             "and" => { fn_and(&Object::List(list_iter.cloned().collect()), stack) }
+            "<=" => { fn_less_than_or_equal(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap(), stack)) }
+            ">=" => { fn_greater_than_or_equal(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap(), stack)) }
             ">" => { fn_greater_than(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap(), stack)) }
             "<" => { fn_less_than(&eval(list_iter.next().unwrap(), stack), &eval(list_iter.next().unwrap(), stack)) }
             _ => { fn_apply_user(first, &Object::List(list_iter.cloned().collect()), stack) }
@@ -233,6 +237,42 @@ mod tests {
     }
 
     #[test]
+    fn test_greater_than() {
+        let test_expr = expr("(> 5 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::T));
+        let test_expr = expr("(> 4 5)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Nil));
+    }
+
+    #[test]
+    fn test_less_than() {
+        let test_expr = expr("(< 4 5)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::T));
+        let test_expr = expr("(< 5 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Nil));
+    }
+
+    #[test]
+    fn test_less_than_or_equal() {
+        let test_expr = expr("(<= 3 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::T));
+        let test_expr = expr("(<= 4 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::T));
+        let test_expr = expr("(<= 5 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Nil));
+    }
+
+    #[test]
+    fn test_greater_than_or_equal() {
+        let test_expr = expr("(>= 5 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::T));
+        let test_expr = expr("(>= 4 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::T));
+        let test_expr = expr("(>= 3 4)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Nil));
+    }
+
+    #[test]
     fn test_add() {
         let test_expr = expr("(+ 1 2)");
         assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Float(MyFloat(3.0))));
@@ -246,6 +286,18 @@ mod tests {
         assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Float(MyFloat(-1.0))));
         let test_expr = expr("(- 1 0.5 0.25)");
         assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Float(MyFloat(0.25))));
+    }
+
+    #[test]
+    fn test_multiply() {
+        let test_expr = expr("(* 1 2)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Float(MyFloat(2.0))));
+    }
+
+    #[test]
+    fn test_divide() {
+        let test_expr = expr("(/ 1 2)");
+        assert_eq!(eval(&test_expr, &mut Stack::new()), Object::Atom(Atom::Float(MyFloat(0.5))));
     }
 
     #[test]

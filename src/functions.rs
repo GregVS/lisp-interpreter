@@ -43,6 +43,22 @@ pub fn fn_greater_than(a: &Object, b: &Object) -> Object {
     }
 }
 
+pub fn fn_greater_than_or_equal(a: &Object, b: &Object) -> Object {
+    if fn_greater_than(a, b) == Object::Atom(Atom::T) || fn_equal(a, b) == Object::Atom(Atom::T) {
+        Object::Atom(Atom::T)
+    } else {
+        Object::Atom(Atom::Nil)
+    }
+}
+
+pub fn fn_less_than_or_equal(a: &Object, b: &Object) -> Object {
+    if fn_less_than(a, b) == Object::Atom(Atom::T) || fn_equal(a, b) == Object::Atom(Atom::T) {
+        Object::Atom(Atom::T)
+    } else {
+        Object::Atom(Atom::Nil)
+    }
+}
+
 pub fn fn_and(expressions: &Object, stack: &mut Stack) -> Object {
     let expressions_list = match expressions {
         Object::List(list) => list,
@@ -124,6 +140,30 @@ pub fn fn_add(vec: &Vec<Object>) -> Object {
         }
     }
     Object::Atom(Atom::Float(MyFloat(sum)))
+}
+
+pub fn fn_multiply(vec: &Vec<Object>) -> Object {
+    let mut product = 1.0;
+    for item in vec {
+        product *= match item {
+            Object::Atom(Atom::Integer(number)) => *number as f64,
+            Object::Atom(Atom::Float(MyFloat(number))) => *number,
+            _ => panic!("Cannot multiply non-number")
+        }
+    }
+    Object::Atom(Atom::Float(MyFloat(product)))
+}
+
+pub fn fn_divide(vec: &Vec<Object>) -> Object {
+    let mut product = 1.0;
+    for item in vec {
+        product /= match item {
+            Object::Atom(Atom::Integer(number)) => *number as f64,
+            Object::Atom(Atom::Float(MyFloat(number))) => *number,
+            _ => panic!("Cannot multiply non-number")
+        }
+    }
+    Object::Atom(Atom::Float(MyFloat(product)))
 }
 
 pub fn fn_equal(a: &Object, b: &Object) -> Object {
@@ -234,7 +274,7 @@ pub fn fn_apply(fn_name: &Object, actuals: &Object, stack: &mut Stack) -> Object
 
 pub fn fn_apply_user(fn_name: &Object, actuals: &Object, stack: &mut Stack) -> Object {
     if let Object::Atom(Atom::Symbol(symbol)) = fn_name {
-        let fn_object = stack.find(&Atom::Symbol(symbol.clone())).unwrap();
+        let fn_object = stack.find(&Atom::Symbol(symbol.clone())).expect(format!("Function {} not found", symbol).as_str());
         if let Object::List(list) = fn_object {
             let mut list_iter = list.iter();
             let formals = list_iter.next().unwrap();

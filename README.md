@@ -7,7 +7,7 @@ quote, car, cdr, cons, print, atom, listp, setq, defun, cond, eq, eval, equal, \
 There is also a `builtin.l` file you can load that provides some useful functions (append, reverse, mapcar).
 
 # Example
-Here's a fun mergesort example:
+Here's a fun mergesort example you can run (test.l):
 
 ```lisp
 ;; This provides some useful functions (append, reverse, mapcar)

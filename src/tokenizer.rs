@@ -38,7 +38,7 @@ pub enum Token {
 }
 
 pub fn tokenize_expr(line: &str) -> Vec<Token> {
-    let new_str = line.replace('(', " ( ").replace(')', " ) ").replace(";;", " ;; ");
+    let new_str = line.replace('(', " ( ").replace(')', " ) ").replace(";;", " ;; ").replace("\n", " <newline> ");
     let mut word_iter = new_str.split_whitespace();
 
     let mut tokens: Vec<Token> = Vec::new();
@@ -46,7 +46,14 @@ pub fn tokenize_expr(line: &str) -> Vec<Token> {
 
     while let Some(w) = word_iter.next() {
         match w {
-            ";;" => { while let Some(_) = word_iter.next() {} }
+            "<newline>" => { continue; }
+            ";;" => {
+                while let Some(w) = word_iter.next() {
+                    if w == "<newline>" {
+                        break;
+                    }
+                }
+            }
             "(" => {
                 tokens.push(Token::LParen);
                 if !quoted_depths.is_empty() {

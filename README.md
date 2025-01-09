@@ -6,21 +6,6 @@ quote, car, cdr, cons, print, atom, listp, setq, defun, cond, eq, eval, equal, \
 
 There is also a `builtin.l` file you can load that provides some useful functions (append, reverse, mapcar).
 
-# Usage
-Assuming you have Rust/Cargo installed, you can run the interpreter with a script file:
-```
-cargo run test.l
-```
-or run the interactive mode like below (note that the interactive mode doesn't support multi-line expressions).
-```
-cargo run
-```
-
-If you want to run the provided test cases, you can run:
-```
-cargo test
-```
-
 # Example
 Here's a fun mergesort example:
 
@@ -61,3 +46,17 @@ Here's a fun mergesort example:
 ;; (6 5 4 3 2 1)
 ```
 
+# Usage
+Assuming you have Rust/Cargo installed, you can run the interpreter with a script file:
+```
+cargo run test.l
+```
+or run the interactive mode like below (note that the interactive mode doesn't support multi-line expressions).
+```
+cargo run
+```
+
+If you want to run the provided test cases, you can run:
+```
+cargo test
+```
